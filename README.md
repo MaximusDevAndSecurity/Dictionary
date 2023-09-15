@@ -9,7 +9,7 @@ This is a simple dictionary app built with React and Vite.
 
 **2. Installation:**
 - Clone the repository: `git clone https://github.com/MaximusDevAndSecurity/Dictionary.git`
-- Navigate to the project directory: `cd dictionary-app`
+- Navigate to the project directory: `cd Dictionary`
 - Install the dependencies: `npm install`
 
 **3. Running the App:**
