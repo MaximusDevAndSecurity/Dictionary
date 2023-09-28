@@ -8,7 +8,7 @@ function App() {
   const [word, setWord] = useState<string | null>(null);
   const [definitions, setDefinitions] = useState<Array<{ definition: string, example: string | null }>>([]);
   const [synonyms, setSynonyms] = useState<string[]>([]);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [phonetics, setPhonetics] = useState<Array<{ audio: string, text: string }>>([]);
 
    // indicate if data is being fetched.
   const [loading, setLoading] = useState<boolean>(false);
@@ -20,6 +20,10 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async (term: string) => {
+    if (!term.trim()) {
+      setError("Please enter a word.");
+      return;
+    }
     setWord(term); 
     setLoading(true);  // Start loading
     setSearchAttempted(true);
@@ -38,6 +42,12 @@ function App() {
       if (data && data.length > 0) {
         let extractedDefinitions: Array<{ definition: string, example: string | null }> = [];
         let extractedSynonyms: string[] = [];
+        let extractedPhonetics: Array<{ audio: string, text: string }> = data[0]?.phonetics.map((phonetic: any) => ({
+          audio: phonetic.audio || '',
+          text: phonetic.text || ''
+        })) || [];
+
+        setPhonetics(extractedPhonetics);
 
    // get details from the fetched data.
         for (let entry of data) {
@@ -54,7 +64,6 @@ function App() {
         setError(null)
         setDefinitions(extractedDefinitions);
         setSynonyms(extractedSynonyms);
-        setAudioURL(data[0]?.phonetics[0]?.audio || null);
       } 
     } catch (error) {
       //if a user searches for a word, the api will throw error, so if we catch error from the api request we setError
@@ -65,10 +74,12 @@ function App() {
     }
   };
 
+
   return (
     <div className="app-container">
     <h1>Dictionary</h1>
     <SearchBar onSearch={handleSearch} />
+    {error && <p className="error-message">{error}</p>}
     {loading ? (
       <p>Loading...</p>
     ) : searchAttempted ? ( 
@@ -77,8 +88,8 @@ function App() {
           word={word} 
           definitions={definitions} 
           synonyms={synonyms} 
-          audioURL={audioURL} 
           error={error}
+          phonetics={phonetics}
       />
     ) : null}
   </div>

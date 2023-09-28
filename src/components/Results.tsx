@@ -11,24 +11,33 @@ interface Props {
   word: string | null;
   definitions: DefinitionType[];
   synonyms: string[];
-  audioURL: string | null;
   error: string | null;
+  phonetics: Array<{ audio: string, text: string }>;
 }
 
 
-const Results: React.FC<Props> = ({ word, definitions, synonyms, audioURL, error }) => {
+const Results: React.FC<Props> = ({ word, definitions, synonyms, error,phonetics }) => {
   // Check if there's an error and display it.
   if (error) {
-    return <p className="error-message">{error}</p>;
+    return <p className="error-message"></p>;
   }
   else 
   {
      return (
-  
     <div>
-      <h2>{word}</h2>
-      {audioURL && <audio controls src={audioURL}></audio>}
-      
+      <h2>Word: {word}</h2>
+   <div>
+   {phonetics.length > 0 && (
+     <div>
+       {phonetics.map((phonetic, index) => (
+         <div key={index}>
+          <p><strong>Phonetics:</strong> {phonetic.text}</p>
+           <audio controls src={phonetic.audio}></audio>
+         </div>
+       ))}
+     </div>
+   )}
+ </div>
       <h3>Definitions:</h3>
       <ul>
         {definitions.map((def, index) => (
@@ -38,7 +47,6 @@ const Results: React.FC<Props> = ({ word, definitions, synonyms, audioURL, error
           </li>
         ))}
       </ul>
-      
       {synonyms.length > 0 && (
         <>
           <h3>Synonyms:</h3>

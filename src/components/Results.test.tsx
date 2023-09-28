@@ -1,9 +1,8 @@
 import { render } from '@testing-library/react';
 import Results from './Results';
 
-// A test to show if Result component is working correctly if passed props
 describe('Results component', () => {
-  test('renders Results component with data', () => {
+  test('renders Results component with data and checks audio elements', () => {
     const mockData = {
       word: 'test',
       definitions: [
@@ -13,14 +12,17 @@ describe('Results component', () => {
         }
       ],
       synonyms: ['hello', 'trial'],
-      audioURL: 'http://example.com/test.mp3',
-      error: null
+      error: null,
+      phonetics: [
+        { audio: 'http://example.com/test1.mp3', text: 'Example Text 1' },
+        { audio: 'http://example.com/test2.mp3', text: 'Example Text 2' }
+      ]
     };
 
-    const { getByText } = render(<Results {...mockData} />);
-
+    const { getByText, container } = render(<Results {...mockData} />);
+    
     // Check for the word "test" in the h2 element specifically.
-    const wordElement = getByText('test');
+    const wordElement = getByText('Word: test');
     expect(wordElement.tagName).toBe('H2');
     expect(wordElement).toBeInTheDocument();
 
@@ -33,6 +35,12 @@ describe('Results component', () => {
 
     // Check for example usage
     expect(getByText(/students often take a practice test/i)).toBeInTheDocument();
-
+    
+    // Check if audio elements are in the document and have the right src.
+    const audioElements = container.querySelectorAll('audio');
+    expect(audioElements.length).toBe(2); // Check if there are two audio elements
+    audioElements.forEach((audioElement, index) => {
+      expect(audioElement).toHaveAttribute('src', mockData.phonetics[index].audio);
+    });
   });
 });

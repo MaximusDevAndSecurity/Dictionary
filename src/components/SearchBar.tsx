@@ -12,9 +12,7 @@ const SearchBar: FC<Props> = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleSearch = () => {
-    if (searchTerm) {
       onSearch(searchTerm);
-    }
   };
 
   return (

@@ -20,10 +20,10 @@ describe('App component', () => {
     render(<App />);
     fireEvent.change(screen.getByPlaceholderText('Search for a word...'), { target: { value: 'test' } });
     fireEvent.click(screen.getByText('Search'));
-    
+
     const loadingElement = await screen.findByText('Loading...');
     expect(loadingElement).toBeInTheDocument();
-});
+  });
 
   test('shows error for network issue', async () => {
     render(<App />);
@@ -33,4 +33,18 @@ describe('App component', () => {
     });
     await waitFor(() => screen.getByText('"invalidWord" is not a valid word or there was a network error.'));
   });
+  
+  test('shows error message when search term is empty', async () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('Search'));
+    expect(await screen.findByText('Please enter a word.')).toBeInTheDocument();
+  });
+  
+  test('renders error state in App component when searching an invalid word', async () => {
+    render(<App />);
+    fireEvent.change(screen.getByPlaceholderText('Search for a word...'), { target: { value: 'invalidWord' } });
+    fireEvent.click(screen.getByText('Search'));
+    expect(await screen.findByText('"invalidWord" is not a valid word or there was a network error.')).toBeInTheDocument();
+  });
 });
+
